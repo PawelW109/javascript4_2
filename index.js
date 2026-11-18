@@ -2,6 +2,9 @@
 
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors())
+app.use(express.json());
 
 let categories = ['funnyJoke', 'lameJoke'];
 let funnyJoke = [
@@ -29,6 +32,14 @@ let lameJoke = [
   }
 ];
 
+function getCategoryTable(c) {
+   if(c == "funnyJoke")
+      return funnyJoke;
+    else if(c == "lameJoke")
+      return lameJoke;
+    return null;
+}
+
 app.get('/jokebook/categories', (req, res) => {
   res.json(categories);
 });
@@ -36,24 +47,35 @@ app.get('/jokebook/categories', (req, res) => {
 app.get('/jokebook/joke/:category', (req, res) => {
   const c = req.param("category")
   let result;
-  if(categories.includes(c)){
-    let t, e = false;
-    if(c == "funnyJoke")
-      t = funnyJoke;
-    else if(c == "lameJoke")
-      t = lameJoke;
-    else
-      e = true;
-
-    if(e)
-      result = {error: "wrong table definition in database"}
-    else{
-      const r = Math.floor(Math.random() * t.length);
-      result = {joke: t[r]}
-    }
-  }
-  else{
+  let t = getCategoryTable(c);
+  if(t == null)
     resut = {error: "no jokes for category " + c}
+  else{
+    const r = Math.floor(Math.random() * t.length);
+    result = {joke: t[r]}
+  }
+  res.json(result);
+});
+
+
+app.post('/jokebook/joke/:category', (req, res) => {
+  const c = req.param("category")
+  let result;
+  let t = getCategoryTable(c);
+
+  const j = req.body;
+
+  if(t == null)
+    result = {error: "no jokes for category " + c}
+  else{
+    console.log(j)
+    if(j.joke && j.response){
+      t.push(j)
+      result = {message: "joke added successfully", joke: j}
+    }
+    else{
+      result = {error: "wrong ", joke: j}
+    }
   }
   res.json(result);
 });
