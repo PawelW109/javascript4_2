@@ -81,6 +81,11 @@ app.post('/jokebook/joke/:category', (req, res) => {
 });
 
 
+app.get('/jokebook/stats/', (req, res) => {
+  const result = {funnyJoke: funnyJoke.length, lameJoke: lameJoke.length}
+  res.json(result);
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
