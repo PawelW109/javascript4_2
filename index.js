@@ -86,6 +86,28 @@ app.get('/jokebook/stats/', (req, res) => {
   res.json(result);
 });
 
+
+app.get('/jokebook/categories', (req, res) => {
+  res.json(categories);
+});
+
+app.get('/jokebook/search', (req, res) => {
+  let jokeList = [];
+  const word = req.query.word;
+  for (const n in categories) {
+    const c = getCategoryTable(categories[n]);
+    for (const j in c) {
+      const joke = c[j];
+      if(joke.joke.includes(word) || joke.response.includes(word))
+        jokeList.push(joke);
+    }
+  }
+  const result = {jokeList}
+  res.json(result);
+});
+
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
