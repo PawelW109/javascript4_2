@@ -99,7 +99,11 @@ app.get('/jokebook/search', (req, res) => {
     for (const j in c) {
       const joke = c[j];
       if(joke.joke.includes(word) || joke.response.includes(word))
-        jokeList.push(joke);
+        jokeList.push({
+          category: categories[n],
+          joke: joke.joke,
+          response: joke.response
+        });
     }
   }
   const result = {jokeList}
